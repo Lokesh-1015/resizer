@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+// import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const router = useRouter()
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -30,30 +32,31 @@ export default function Home() {
     setImageUrls(data.images);
   };
 
-  const postToX = async (imageUrl: string) => {
-    if (!session) {
-      signIn("twitter");
-      return;
-    }
+  const postToX = async (url: string) => {
+    router.push(url)
+    // if (!session) {
+    //   signIn("twitter");
+    //   return;
+    // }
 
-    const response = await fetch("/api/postToX", {
-      method: "POST",
-      body: JSON.stringify({
-        // accessToken: session.accessToken,
-        imageUrl,
-        caption: "Resized Image from my Next.js app!",
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
+    // const response = await fetch("/api/postToX", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     // accessToken: session.accessToken,
+    //     imageUrl,
+    //     caption: "Resized Image from my Next.js app!",
+    //   }),
+    //   headers: { "Content-Type": "application/json" },
+    // });
 
-    if (response.ok) alert("Posted to Twitter!");
+    // if (response.ok) alert("Posted to Twitter!");
   };
 
   return (
     <main className="p-6">
       <h1 className="text-2xl font-bold">Image Resizer & Twitter Poster</h1>
 
-      {!session ? (
+      {/* {!session ? (
         <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => signIn("twitter")}>
           Sign in with Twitter
         </button>
@@ -61,7 +64,7 @@ export default function Home() {
         <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded" onClick={() => signOut()}>
           Sign Out
         </button>
-      )}
+      )} */}
 
       <input type="file" accept="image/*" onChange={handleFileChange} className="mt-4" />
       <button onClick={uploadImage} className="mt-4 bg-green-500 text-white px-4 py-2 rounded">
@@ -72,7 +75,7 @@ export default function Home() {
         {imageUrls.map((url, index) => (
           <div key={index}>
             <Image src={url} width={1000} height={1000} alt="Resized" className="w-40 mt-4" />
-            <button onClick={() => postToX(url)} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+            <button onClick={() => postToX(`https://twitter.com/intent/tweet?text=Check+out+this+awesome+image!&url=${url}`)} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
               Post to X
             </button>
           </div>
