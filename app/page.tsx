@@ -23,7 +23,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const response = await fetch(`${process.env.APP_URL}/api/upload`, {
+    const response = await fetch(`/api/upload`, {
       method: "POST",
       body: formData,
     });
